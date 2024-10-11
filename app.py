@@ -1,7 +1,5 @@
 import streamlit as st
 
-st.set_page_config(page_title="Calculadora Nexaas", layout="wide", initial_sidebar_state="expanded", theme="light")
-
 # Aplicar CSS customizado
 st.markdown("""
     <style>
