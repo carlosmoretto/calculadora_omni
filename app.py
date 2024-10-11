@@ -1,5 +1,7 @@
 import streamlit as st
 
+st.set_page_config(page_title="Nexaas - Calculadora Omni", page_icon="faviconV2.png")
+
 # Aplicar CSS customizado
 st.markdown("""
     <style>
