@@ -30,6 +30,10 @@ st.markdown("""
     .stSidebar .sidebar-content .stHeader {
         color: #ffffff;
     }
+    .stMainBlockContainer{
+        width: 100%;
+        padding: 2rem 1rem 10rem;
+        max-width: 46rem;
     </style>
     """, unsafe_allow_html=True)
 
