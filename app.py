@@ -91,8 +91,19 @@ valor_por_loja = total_valor / num_lojas
 def formatar_valor(valor):
     return f'R$ {valor:,.2f}'.replace(',', 'v').replace('.', ',').replace('v', '.')
 
-# Exibição dos totalizadores
-st.sidebar.write('\n**Totalizadores**')
-st.sidebar.write(f'Nexaas Omni por apenas: **{formatar_valor(round(total_valor, 2))}**')
-st.sidebar.write(f'Valor por loja: **{formatar_valor(round(valor_por_loja, 2))}**')
-st.sidebar.write(f'Valor do Setup: **{formatar_valor(round(total_setup, 2))}**')
+@st.dialog("Resumo dos Totalizadores")
+def calc (total_valor, valor_por_loja, total_setup):
+    # st.write('\n**Totalizadores**')
+    st.write(f'Nexaas Omni por apenas: **{formatar_valor(round(total_valor, 2))}**')
+    st.write(f'Valor por loja: **{formatar_valor(round(valor_por_loja, 2))}**')
+    st.write(f'Valor do Setup: **{formatar_valor(round(total_setup, 2))}**')
+
+if st.button("Calcular"):
+    calc(total_valor, valor_por_loja, total_setup)
+
+
+# # Exibição dos totalizadores
+# st.sidebar.write('\n**Totalizadores**')
+# st.sidebar.write(f'Nexaas Omni por apenas: **{formatar_valor(round(total_valor, 2))}**')
+# st.sidebar.write(f'Valor por loja: **{formatar_valor(round(valor_por_loja, 2))}**')
+# st.sidebar.write(f'Valor do Setup: **{formatar_valor(round(total_setup, 2))}**')
