@@ -52,40 +52,78 @@ quant_vendas_mensais = st.number_input('Em média, qual a quantidade de vendas m
 quant_skus = st.number_input("Quantos SKU's em média você possui total?", min_value=1, step=1, value=300, key='op3')
 num_canais_venda = st.number_input('Quantos canais de venda diferentes?', min_value=1, step=1, value=5, key='op4')
 
+var_calc = dict()
+
 # Definindo os valores fixos para o cálculo
 request_sku_oms = 17200000*4
+var_calc['var_request_sku_oms'] = request_sku_oms
+
 request_sales_oms = 8300000*4
+var_calc["var_request_sales_oms"] = request_sales_oms
 
-custo_por_produto_pedidoD03 = 570519
-custo_por_produto_pedidoD04 = 55445
+total_produtos = 570519
+var_calc['var_total_produtos'] = total_produtos
 
-custo_por_produto_pedidoD05 = round(request_sku_oms / custo_por_produto_pedidoD03, 7)
-custo_por_produto_pedidoD06 = round(request_sales_oms / custo_por_produto_pedidoD04, 7)
-custo_por_produto_pedidoD07 = 29000
-custo_por_produto_pedidoD08 = round(custo_por_produto_pedidoD07 / (request_sku_oms + request_sales_oms), 4)
-custo_por_produto_pedidoD09 = round(custo_por_produto_pedidoD08 * custo_por_produto_pedidoD05, 4)  # D8 * D5
-custo_por_produto_pedidoD10 = round(custo_por_produto_pedidoD08 * custo_por_produto_pedidoD06, 4)  # D8 * D6
-custo_por_produto_pedidoD11 = 30
-custo_por_produto_pedidoD12 = 1.5
-custo_por_produto_pedidoD14 = 200
+total_pedidos = 55445
+var_calc['var_total_pedidos'] = total_pedidos
 
-custo_por_produto_pedidoD15 = 522.43  # ='Cópia de Custo por Loja'!M9 - FIXO
-custo_por_produto_pedidoD16 = 129.03  # ='Custo por Loja simulação +250 lojas'!M9 - FIXO
-custo_por_produto_pedidoD17 = 143.52  # ='Cópia de Custo por Loja'!N91/165 - FIXO
+requisicoes_por_produto = round(request_sku_oms / total_produtos, 7)
+var_calc['var_requisicoes_por_produto'] = requisicoes_por_produto
+requisicoes_por_pedido = round(request_sales_oms / total_pedidos, 7)
+var_calc['var_requisicoes_por_pedido'] = requisicoes_por_pedido
+custo_total_aws_oms = 29000
+var_calc['var_custo_total_aws_oms'] = custo_total_aws_oms
+custo_por_requisicao = round(custo_total_aws_oms / (request_sku_oms + request_sales_oms), 4)
+var_calc['var_custo_por_requisicao'] = custo_por_requisicao
+custo_por_produto = round(custo_por_requisicao * requisicoes_por_produto, 4)  # D8 * D5
+var_calc['var_custo_por_produto'] = custo_por_produto
+custo_por_pedido = round(custo_por_requisicao * requisicoes_por_pedido, 4)  # D8 * D6
+var_calc['var_custo_por_pedido'] = custo_por_pedido
+custo_armazenamento_organizacao = 0.0012
+var_calc['var_custo_armazenamento_organizacao'] = custo_armazenamento_organizacao
+vetor_integracoes = 0.2
+var_calc['var_vetor_integracoes'] = vetor_integracoes
+margem_meta = 0.2
+var_calc['var_margem_meta'] = margem_meta
+custo_pdv = 150
+var_calc['var_custo_pdv'] = custo_pdv
 
-custo_por_produto_pedidoD18 = 71.04  # ='Cópia de Custo por Loja'!N91/400*1,2
-custo_por_produto_pedidoD19 = 195.12  # ='Cópia de Custo por Loja'!O9
-custo_por_produto_pedidoD20 = 48.19  # ='Custo por Loja simulação +250 lojas'!O9
+custo_medio_dev_165_lojas  = 522.43  # ='Cópia de Custo por Loja'!M9 - FIXO
+var_calc['var_custo_medio_dev_165_lojas'] = custo_medio_dev_165_lojas
+custo_medio_dev_400_lojas  = 129.03  # ='Custo por Loja simulação +250 lojas'!M9 - FIXO
+var_calc['var_custo_medio_dev_400_lojas'] = custo_medio_dev_400_lojas
+custo_medio_suporte_165_lojas  = 143.52  # ='Cópia de Custo por Loja'!N91/165 - FIXO
+var_calc['var_custo_medio_suporte_165_lojas'] = custo_medio_suporte_165_lojas
+
+custo_medio_suporte_400_lojas = 71.04  # ='Cópia de Custo por Loja'!N91/400*1,2
+var_calc['var_custo_medio_suporte_400_lojas'] = custo_medio_suporte_400_lojas
+custo_medio_cs_165_lojas = 195.12  # ='Cópia de Custo por Loja'!O9
+var_calc['var_custo_medio_cs_165_lojas'] = custo_medio_cs_165_lojas
+custo_medio_cs_400_lojas = 48.19  # ='Custo por Loja simulação +250 lojas'!O9
+var_calc['var_custo_medio_cs_400_lojas'] = custo_medio_cs_400_lojas
 
 # Condicional para determinar o valor de 'cond1'
 if num_lojas <= 165:
-    cond1 = (custo_por_produto_pedidoD15 + custo_por_produto_pedidoD17 + custo_por_produto_pedidoD19) * num_lojas
+    cond1 = (custo_medio_dev_165_lojas  + custo_medio_suporte_165_lojas  + custo_medio_cs_165_lojas) * num_lojas
 else:
-    cond1 = (custo_por_produto_pedidoD16 + custo_por_produto_pedidoD18 + custo_por_produto_pedidoD20) * num_lojas
+    cond1 = (custo_medio_dev_400_lojas  + custo_medio_suporte_400_lojas + custo_medio_cs_400_lojas) * num_lojas
+
+var_calc['condicion'] = cond1
+
 
 # Cálculo do valor total
-total_valor = num_lojas * custo_por_produto_pedidoD14 + (custo_por_produto_pedidoD10 * quant_vendas_mensais + custo_por_produto_pedidoD09 * quant_skus)\
-                        * num_canais_venda * custo_por_produto_pedidoD12 + custo_por_produto_pedidoD11 + cond1
+total_valor = (num_lojas * custo_pdv + (custo_por_pedido * quant_vendas_mensais + custo_por_produto * quant_skus)\
+                        + (custo_por_pedido*quant_vendas_mensais+custo_por_produto*quant_skus) \
+                        * num_canais_venda * vetor_integracoes + custo_armazenamento_organizacao\
+                        * (quant_vendas_mensais+quant_skus) + cond1) *(1+margem_meta)
+
+trecho_1 = num_lojas * custo_pdv + (custo_por_pedido * quant_vendas_mensais + custo_por_produto * quant_skus)
+# print(f"Trecho Calc 1: {trecho_1}")
+
+trecho_2 = (custo_por_pedido*quant_vendas_mensais+custo_por_produto*quant_skus)  * num_canais_venda * vetor_integracoes + custo_armazenamento_organizacao * (quant_vendas_mensais+quant_skus)
+# print(f"Trecho Calc 2: {trecho_2}")
+
+# print(f"Trecho Calc 3: {(1+margem_meta)}")
 
 total_setup = round(total_valor * 5, 2)
 
